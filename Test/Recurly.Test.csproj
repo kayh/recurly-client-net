@@ -62,6 +62,7 @@
     <Compile Include="AccountTest.cs" />
     <Compile Include="BillingInfoTest.cs" />
     <Compile Include="ChargeTest.cs" />
+    <Compile Include="PlanTest.cs" />
     <Compile Include="VerificationTest.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
