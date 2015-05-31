@@ -22,7 +22,50 @@ namespace Recurly
             Months
         }
 
+        public RecurlyPlan()
+        {
+        }
+
+        internal RecurlyPlan(XmlTextReader reader)
+            : this()
+        {
+            ReadXml(reader);
+        }
+
         private const string UrlPrefix = "/company/plans/";
+
+        public static IEnumerable<RecurlyPlan> GetAll()
+        {
+            var plans = new List<RecurlyPlan>();
+
+            HttpStatusCode statusCode = RecurlyClient.PerformRequest(RecurlyClient.HttpRequestMethod.Get, UrlPrefix,
+                                                                     reader =>
+                                                                     {
+                                                                         while (reader.Read())
+                                                                         {
+                                                                             // End of account element, get out of here
+                                                                             if (reader.Name == "plans" &&
+                                                                                 reader.NodeType ==
+                                                                                 XmlNodeType.EndElement)
+                                                                                 break;
+
+                                                                             if (reader.NodeType == XmlNodeType.Element &&
+                                                                                 reader.Name == "plan")
+                                                                             {
+                                                                                 var plan = new RecurlyPlan(reader);
+                                                                                 plans.Add(plan);
+                                                                             }
+                                                                         }
+
+                                                                     });
+
+            if (statusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            return plans;
+        }
 
         public static RecurlyPlan Get(string planCode)
         {
